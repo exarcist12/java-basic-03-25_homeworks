@@ -4,11 +4,6 @@ import java.util.Scanner;
 
 public class Homework3 {
     public static void main(String[] args) {
-//        greetings();
-//        checkSign(5, -2, -3);
-//        selectColor();
-//        compareNumbers();
-//        addOrSubtractAndPrint(10, 5, true);
 
         System.out.println("Введите номер метода: 1 - greetings, 2 - checkSign, 3 - selectColor, 4 - compareNumbers, 5 - addOrSubtractAndPrint:");
         Scanner scanner = new Scanner(System.in);
@@ -71,12 +66,10 @@ public class Homework3 {
         int b = (int) (Math.random() * 30);
         System.out.println("a = " + a);
         System.out.println("b = " + b);
-        if (a > b) {
+        if (a >= b) {
             System.out.println("a больше b");
-        } else if (a < b) {
-            System.out.println("a меньше b");
-        } else {
-            System.out.println("a равно b");
+        } else  {
+                System.out.println("a меньше b");
         }
     }
 
