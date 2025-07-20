@@ -19,7 +19,7 @@ public class Main {
 
         for (int i = 0; i < users.length; i++) {
             if (2025 - users[i].getYearOfBirth() >= 40) {
-                users[i].getInfo(users[i]);
+                users[i].getInfo();
             }
         }
     }

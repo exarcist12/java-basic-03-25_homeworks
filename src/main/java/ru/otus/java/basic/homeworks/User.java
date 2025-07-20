@@ -19,11 +19,11 @@ public class User {
         this.email = email;
     }
 
-    public void getInfo(User user) {
+    public void getInfo() {
         System.out.println();
-        System.out.println("ФИО: " + user.secondName + " " + user.name + " " + user.patronymic);
-        System.out.println("Год рождения: " + user.yearOfBirth);
-        System.out.println("Email: " + user.email);
+        System.out.println("ФИО: " + this.secondName + " " + this.name + " " + this.patronymic);
+        System.out.println("Год рождения: " + this.yearOfBirth);
+        System.out.println("Email: " + this.email);
     }
 
 }
