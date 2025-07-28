@@ -1,11 +1,11 @@
 package org.example;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws AppArrayDataException, AppArraySizeException {
 
-        Object[][] arr = {{1,2,3,4},{1,2,3,4},{1,2,3,4},{1,2,3,4}};
-        Object[][] arr2 = {{1,2,3},{1,2,3,4},{1,2,3,4},{1,2,3,4}};
-        Object[][] arr3 = {{1,2,3,"4"},{1,2,3,4},{1,2,3,4},{1,2,3,4}};
+        String[][] arr = {{"1a", "2", "3", "4"}, {"1", "2", "3", "4"}, {"1", "2", "3", "4"}, {"1", "2", "3", "4"}};
+        String[][] arr2 = {{"1", "2", "3", "4", "5"}, {"1", "2", "3", "4"}, {"1", "2", "3", "4"}, {"1", "2", "3", "4"}};
+        String[][] arr3 = {{"1", "2", "3", "4"}, {"1", "2", "3", "4"}, {"1", "2", "3", "4"}, {"1", "2", "3", "4"}};
 
         try {
             System.out.println(sumElementArray(arr));
@@ -20,8 +20,7 @@ public class Main {
                 System.out.println(e.getMessage());
             } catch (AppArrayDataException e) {
                 System.out.println(e.getMessage());
-            }
-            finally {
+            } finally {
                 try {
                     System.out.println(sumElementArray(arr3));
                 } catch (AppArraySizeException e) {
@@ -32,30 +31,26 @@ public class Main {
             }
         }
 
-
     }
 
 
-
-    public static int  sumElementArray(Object[][] arr) throws AppArrayDataException, AppArraySizeException {
+    public static int sumElementArray(String[][] arr) throws AppArrayDataException, AppArraySizeException {
 
         if (arr.length != 4 || arr[0].length != 4) {
             throw new AppArraySizeException("Некорректный размер массива");
-        } else {
-
-            int sum = 0;
-            for (int i = 0; i < arr.length; i++) {
-                for (int j = 0; j < arr[i].length; j++) {
-                    if (arr[i][j] instanceof Integer) {
-                        sum += (Integer) arr[i][j];
-                    } else {
-                        throw new AppArrayDataException("Некорректный тип данных");
-                    }
-                }
-            }
-            return sum;
         }
-
+        int sum = 0;
+        int intNumber;
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = 0; j < arr[i].length; j++) {
+                try {
+                    intNumber = Integer.parseInt(arr[i][j]);
+                } catch (NumberFormatException e) {
+                    throw new AppArrayDataException("Некорректный тип данных");
+                }
+                sum += intNumber;
+            }
+        }
+        return sum;
     }
-
 }
