@@ -6,28 +6,23 @@ import java.util.List;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
-public class TreeBulder implements SearchTree<TreeBulder.Tree> {
+public class TreeBulder implements SearchTree<Tree> {
 
 
-    Tree root;
+    protected Tree root;
+    private List<Integer> list;
 
-    List<Integer> list;
-
-    TreeBulder(List<Integer> list) {
+    public TreeBulder(List<Integer> list) {
         this.list = list;
         List<Tree> treeList = getSortedList();
         root = build(treeList, 0, list.size()-1);
     }
 
-    public static class Tree {
-        int value;
-        Tree left, right;
-        Tree(int value) { this.value = value; }
-    }
 
     private Tree build(List<Tree> treeList, int start, int end) {
-        if (start > end)
+        if (start > end) {
             return null;
+        }
         int mid = (start + end) / 2;
         Tree tree = treeList.get(mid);
         tree.left = build(treeList, start, mid - 1);
@@ -36,7 +31,9 @@ public class TreeBulder implements SearchTree<TreeBulder.Tree> {
     }
 
     static void print(Tree tree) {
-        if (tree == null) return;
+        if (tree == null) {
+            return;
+        }
         Queue<Tree> q = new LinkedList<>();
         q.add(tree);
         while (!q.isEmpty()) {
@@ -44,24 +41,32 @@ public class TreeBulder implements SearchTree<TreeBulder.Tree> {
             for (int i=0; i<n; i++) {
                 Tree cur = q.poll();
                 System.out.print(cur.value + " ");
-                if (cur.left != null) q.add(cur.left);
-                if (cur.right != null) q.add(cur.right);
+                if (cur.left != null) {
+                    q.add(cur.left);
+                }
+                if (cur.right != null) {
+                    q.add(cur.right);
+                }
             }
             System.out.println();
         }
     }
 
-    public static void main(String[] args) {
-        TreeBulder treeBulder = new TreeBulder(List.of(55,66,2,3,4,5,6,7,8,9,10));
-        print(treeBulder.root);
-    }
 
     @Override
     public Tree find(Tree root, Tree element) {
-        if(root == null) return null;
-        else if(root.value == element.value) return root;
-        else if(root.value > element.value) return find(root.left, element);
-        else return find(root.right, element);
+        if(root == null) {
+            return null;
+        }
+        else if(root.value == element.value) {
+            return root;
+        }
+        else if(root.value > element.value) {
+            return find(root.left, element);
+        }
+        else {
+            return find(root.right, element);
+        }
     }
 
     @Override

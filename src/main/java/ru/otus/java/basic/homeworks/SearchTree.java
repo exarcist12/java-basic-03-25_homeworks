@@ -8,8 +8,5 @@ public interface SearchTree<T> {
 
     List<T> getSortedList();
 
-//    TreeBulder.Tree find(TreeBulder.Tree root, TreeBulder.Tree element);
-
-//   TreeBulder.Tree find(TreeBulder.Tree root, TreeBulder.Tree element);
 }
 
