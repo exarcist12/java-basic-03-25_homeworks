@@ -11,5 +11,4 @@ public class MathSolution {
             arr[i] = 1.14 * Math.cos(i) * Math.sin(i * 0.2) * Math.cos(i / 1.2);
         }
     }
-
 }
