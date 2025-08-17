@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.Optional;
 
 public class ServerConnection {
     private Socket socket;
@@ -9,6 +10,7 @@ public class ServerConnection {
 
     private boolean authenticated;
     private String username;
+    private String role;
 
     public ServerConnection(Socket client, ServerBase server) throws IOException {
         this.socket = client;
@@ -64,6 +66,12 @@ public class ServerConnection {
                         server.unsubscribe(this);
                         break;
                     }
+                    if (message.startsWith("/w")) {
+                        privateMessage(message, this);
+                    }  else if (message.startsWith("/kick") && this.getRole().equals("admin")) {
+                        kickUser(message, this);
+                    }
+
                     this.server.broadcastMessage(message, this);
                 }
             } catch (IOException e) {
@@ -111,5 +119,56 @@ public class ServerConnection {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+
+    public void privateMessage(String message, ServerConnection sender) throws IOException {
+            String[] tokens = message.split(" ", 3);
+            if (tokens.length < 3) {
+                sender.send("Формат: /w имя сообщение");
+                return;
+            }
+            String name = tokens[1];
+            String text = tokens[2];
+
+            Optional<ServerConnection> optReceiver = server.getClients().stream()
+                    .filter(p1 -> p1.getUsername().equals(name)).findFirst();
+
+            if (optReceiver.isPresent()) {
+                ServerConnection receiver = optReceiver.get();
+                receiver.send("Вам пришло личное сообщение от " + sender.getUsername() + ": " + text + ". Напишите свой ответ:");
+            } else {
+                sender.send("Пользователь '" + name + "' не найден.");
+            }
+    }
+
+
+    public void kickUser(String message, ServerConnection sender) throws IOException {
+        String[] tokens = message.split(" ", 2);
+        if (tokens.length != 2) {
+            sender.send("Формат: /kick имя сообщение");
+            return;
+        }
+        String name = tokens[1];
+
+        Optional<ServerConnection> optReceiver = server.getClients().stream()
+                .filter(p1 -> p1.getUsername().equals(name)).findFirst();
+
+        if (optReceiver.isPresent()) {
+            ServerConnection receiver = optReceiver.get();
+            receiver.send("/kick");
+            server.unsubscribe(receiver);
+        } else {
+            sender.send("Пользователь '" + name + "' не найден.");
+        }
     }
 }

@@ -17,8 +17,11 @@ public class Client {
                 while (true) {
                     String message = exampleClient.getMessage();
                     System.out.print("\r\033[2K");
-                    System.out.println(message);
-                    if (message.equals("Вас отключили от сервера")){
+                    if (!message.equals("/kick")) {
+                        System.out.println(message);
+                    }
+                    if (message.equals("/kick")){
+                        System.out.println("Вас отключили от сервера");
                         exampleClient.close();
                     }
 

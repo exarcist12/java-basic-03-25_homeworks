@@ -40,6 +40,15 @@ public class InMemoryAuthenticatedProvider implements  AuthenticatedProvider{
         return null;
     }
 
+    private String getRoleByLoginAndPassword(String login, String password) {
+        for (User u : users) {
+            if (u.login.equals(login) && u.password.equals(password)) {
+                return u.role;
+            }
+        }
+        return null;
+    }
+
     private boolean isLoginAlreadyExist(String login) {
         for (User u : users) {
             if (u.login.equals(login)) {
@@ -66,6 +75,7 @@ public class InMemoryAuthenticatedProvider implements  AuthenticatedProvider{
     @Override
     public boolean authenticate(ServerConnection serverConnection, String login, String password) throws IOException {
         String authUsername = getUsernameByLoginAndPassword(login, password);
+        String authRole = getRoleByLoginAndPassword(login, password);
         if (authUsername == null) {
             serverConnection.send("Некорректный логин / пароль");
             return false;
@@ -75,6 +85,7 @@ public class InMemoryAuthenticatedProvider implements  AuthenticatedProvider{
             return false;
         }
         serverConnection.setUsername(authUsername);
+        serverConnection.setRole(authRole);
         server.subscribe(serverConnection);
         serverConnection.send("/authok " + authUsername);
         return true;

@@ -43,49 +43,11 @@ public class ServerBase {
     }
 
     public void broadcastMessage(String message, ServerConnection sender) throws IOException {
-        if (message.startsWith("/w")) {
-            String[] tokens = message.split(" ", 3);
-            if (tokens.length < 3) {
-                sender.send("Формат: /w имя сообщение");
-                return;
-            }
-            String name = tokens[1];
-            String text = tokens[2];
-
-            Optional<ServerConnection> optReceiver = clients.stream()
-                    .filter(p1 -> p1.getUsername().equals(name)).findFirst();
-
-            if (optReceiver.isPresent()) {
-                ServerConnection receiver = optReceiver.get();
-                receiver.send("Вам пришло личное сообщение от " + sender.getUsername() + ": " + text + ". Напишите свой ответ:");
-            } else {
-                sender.send("Пользователь '" + name + "' не найден.");
-            }
-        }else if (message.startsWith("/kick") && sender.getUsername().equals("admin")) {
-            String[] tokens = message.split(" ", 2);
-            if (tokens.length != 2) {
-                sender.send("Формат: /kick имя сообщение");
-                return;
-            }
-            String name = tokens[1];
-
-            Optional<ServerConnection> optReceiver = clients.stream()
-                    .filter(p1 -> p1.getUsername().equals(name)).findFirst();
-
-            if (optReceiver.isPresent()) {
-                ServerConnection receiver = optReceiver.get();
-                receiver.send("Вас отключили от сервера");
-                unsubscribe(receiver);
-            } else {
-                sender.send("Пользователь '" + name + "' не найден.");
-            }
-        }else {
             for (ServerConnection c : clients) {
                 if (c != sender) {
                     c.send(sender.getUsername() + ": " + message);
                 }
             }
-        }
     }
 
     public boolean isUsernameBusy(String username) {
@@ -99,5 +61,10 @@ public class ServerBase {
 
     public AuthenticatedProvider getAuthenticatedProvider() {
         return authenticatedProvider;
+    }
+
+
+    public List<ServerConnection> getClients() {
+        return clients;
     }
 }
