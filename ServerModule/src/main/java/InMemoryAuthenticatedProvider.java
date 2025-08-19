@@ -1,40 +1,36 @@
+import entity.User;
+
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class InMemoryAuthenticatedProvider implements  AuthenticatedProvider{
 
-    private class User {
-        private String login;
-        private String password;
-        private String username;
-        private String role;
+    UserServiceImpl userService;
 
-        public User(String login, String password, String username, String role) {
-            this.login = login;
-            this.password = password;
-            this.username = username;
-            this.role = role;
+    {
+        try {
+            userService = new UserServiceImpl();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
+
     private List<User> users;
     private ServerBase server;
 
     public InMemoryAuthenticatedProvider(ServerBase server) {
         this.server = server;
-        this.users = new CopyOnWriteArrayList<>();
-        this.users.add(new User("qwe", "qwe", "qwe1", "user"));
-        this.users.add(new User("asd", "asd", "asd1", "user"));
-        this.users.add(new User("zxc", "zxc", "zxc1", "user"));
-        this.users.add(new User("admin", "admin", "admin", "admin"));
+        this.users = userService.getAllUsers();
     }
 
 
 
     private String getUsernameByLoginAndPassword(String login, String password) {
         for (User u : users) {
-            if (u.login.equals(login) && u.password.equals(password)) {
-                return u.username;
+            if (u.getLogin().equals(login) && u.getPasswordUser().equals(password)) {
+                return u.getUsername();
             }
         }
         return null;
@@ -42,8 +38,8 @@ public class InMemoryAuthenticatedProvider implements  AuthenticatedProvider{
 
     private String getRoleByLoginAndPassword(String login, String password) {
         for (User u : users) {
-            if (u.login.equals(login) && u.password.equals(password)) {
-                return u.role;
+            if (u.getLogin().equals(login) && u.getPasswordUser().equals(password)) {
+                return u.getRole().getRoleName();
             }
         }
         return null;
@@ -51,7 +47,7 @@ public class InMemoryAuthenticatedProvider implements  AuthenticatedProvider{
 
     private boolean isLoginAlreadyExist(String login) {
         for (User u : users) {
-            if (u.login.equals(login)) {
+            if (u.getLogin().equals(login)) {
                 return true;
             }
         }
@@ -60,7 +56,7 @@ public class InMemoryAuthenticatedProvider implements  AuthenticatedProvider{
 
     private boolean isUsernameAlreadyExist(String username) {
         for (User u : users) {
-            if (u.username.equals(username)) {
+            if (u.getUsername().equals(username)) {
                 return true;
             }
         }
@@ -109,7 +105,12 @@ public class InMemoryAuthenticatedProvider implements  AuthenticatedProvider{
             serverConnection.send("Указанное имя пользователя уже занято");
             return false;
         }
-        users.add(new User(login, password, username, "user"));
+        userService.addUser(User.builder()
+                        .login(login)
+                        .passwordUser(password)
+                        .username(username)
+                .build());
+        users = userService.getAllUsers();
         serverConnection.setUsername(username);
         server.subscribe(serverConnection);
         serverConnection.send("/regok " + username);
