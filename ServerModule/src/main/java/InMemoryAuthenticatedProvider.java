@@ -7,7 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class InMemoryAuthenticatedProvider implements  AuthenticatedProvider{
 
-    UserServiceImpl userService;
+    UserServiceImpl userService = new UserServiceImpl();
 
 
     private List<User> users;
