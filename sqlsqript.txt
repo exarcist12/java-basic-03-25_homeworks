@@ -1,0 +1,20 @@
+CREATE TABLE role (
+    id serial PRIMARY KEY,
+    name varchar(50)
+);
+
+CREATE TABLE users (
+    id serial PRIMARY KEY,
+	login varchar(50) NULL,
+	password varchar(50) NULL,
+	username varchar(50) NULL,
+    role_id serial REFERENCES role(id)
+);
+
+insert into role (name) values ('user');
+insert into role (name) values ('admin');
+
+insert into users (login, "password", username, role_id) values ('qwe', 'qwe', 'qwe1', 1);
+insert into users (login, "password", username, role_id) values ('asd', 'asd', 'asd1', 1);
+insert into users (login, "password", username, role_id) values ('zxc', 'zxc', 'zxc1', 1);
+insert into users (login, "password", username, role_id) values ('admin', 'admin', 'admin', 2);
