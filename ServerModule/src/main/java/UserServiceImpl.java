@@ -16,8 +16,12 @@ public class UserServiceImpl {
 
     private final Connection connection;
 
-    public UserServiceImpl() throws SQLException {
-        connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
+    public UserServiceImpl() {
+        try{
+            connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Role getRole(User user) {
@@ -71,18 +75,7 @@ public class UserServiceImpl {
         try (Statement statement = connection.createStatement()) {
             try (ResultSet rs = statement.executeQuery(ALL_USERS)) {
                 while (rs.next()) {
-                    String login = rs.getString("login");
-                    String password = rs.getString("password_user");
-                    String username = rs.getString("username");
-                    String roleName = rs.getString("role_name");
-                    User currentUser = User.builder()
-                            .login(login)
-                            .passwordUser(password)
-                            .username(username)
-                            .role(Role.builder()
-                                    .roleName(roleName)
-                                    .build())
-                            .build();
+                    User currentUser = UserMapper.getUser(rs);
                     result.add(currentUser);
                 }
             }

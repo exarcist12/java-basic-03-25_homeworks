@@ -12,6 +12,13 @@ public class ServerConnection {
     private String username;
     private String role;
 
+    private static final String AUTH_COMMAND = "/auth ";
+    private static final String REG_COMMAND = "/reg ";
+    private static final String EXIT_COMMAND = "/exit";
+    private static final String PRIVATE_MESSAGE_COMMAND = "/w";
+    private static final String KICK_COMMAND = "/kick";
+    private static final String ROLE_ADMIN = "admin";
+
     public ServerConnection(Socket client, ServerBase server) throws IOException {
         this.socket = client;
         this.server = server;
@@ -25,15 +32,10 @@ public class ServerConnection {
                             " или зарегистрироваться '/reg login password username'");
                     String message = in.readUTF();
                     if (message.startsWith("/")) {
-                        if (message.equals("/exit")) {
-                            send("/exitok");
-                            break;
-                        }
-                        // /auth login password
-                        if (message.startsWith("/auth ")) {
+                        if (message.startsWith(AUTH_COMMAND)) {
                             String[] token = message.split(" ");
                             if (token.length != 3) {
-                                send("Неверный формат команды /auth");
+                                send("Неверный формат команды " + AUTH_COMMAND);
                                 continue;
                             }
                             if (server.getAuthenticatedProvider()
@@ -42,11 +44,10 @@ public class ServerConnection {
                                 break;
                             }
                         }
-                        // /reg login password username
-                        if (message.startsWith("/reg ")) {
+                        if (message.startsWith(REG_COMMAND)) {
                             String[] token = message.split(" ");
                             if (token.length != 4) {
-                                send("Неверный формат команды /reg");
+                                send("Неверный формат команды " + REG_COMMAND);
                                 continue;
                             }
                             if (server.getAuthenticatedProvider()
@@ -62,13 +63,13 @@ public class ServerConnection {
                 while (true) {
                     String message = getMessage();
                     System.out.println("Получено сообщение: " + message);
-                    if (message.equalsIgnoreCase("exit")) {
+                    if (message.equalsIgnoreCase(EXIT_COMMAND)) {
                         server.unsubscribe(this);
                         break;
                     }
-                    if (message.startsWith("/w")) {
+                    if (message.startsWith(PRIVATE_MESSAGE_COMMAND)) {
                         privateMessage(message, this);
-                    }  else if (message.startsWith("/kick") && this.getRole().equals("admin")) {
+                    }  else if (message.startsWith(KICK_COMMAND) && this.getRole().equals(ROLE_ADMIN)) {
                         kickUser(message, this);
                     }
 
@@ -165,7 +166,7 @@ public class ServerConnection {
 
         if (optReceiver.isPresent()) {
             ServerConnection receiver = optReceiver.get();
-            receiver.send("/kick");
+            receiver.send(KICK_COMMAND);
             server.unsubscribe(receiver);
         } else {
             sender.send("Пользователь '" + name + "' не найден.");

@@ -37,11 +37,10 @@ public class Client {
             }
         }).start();
 
-//        System.out.println("Введи сообщение: ");
         while(true){
             try {
                 String userMessage = scanner.nextLine();
-                if(userMessage.equalsIgnoreCase("exit")){
+                if(userMessage.equalsIgnoreCase("/exit")){
                     exampleClient.send(userMessage);
                     exampleClient.close();
                     break;

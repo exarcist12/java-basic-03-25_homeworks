@@ -9,13 +9,6 @@ public class InMemoryAuthenticatedProvider implements  AuthenticatedProvider{
 
     UserServiceImpl userService;
 
-    {
-        try {
-            userService = new UserServiceImpl();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private List<User> users;
     private ServerBase server;
